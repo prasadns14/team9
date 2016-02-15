@@ -93,7 +93,6 @@ public class ByteFrequencyCorrelation
 		{
 			double corrfactor = getCorrelationStrength(Math.abs(inputFileCounts[i] - fingerprintCounts[i]));
 			double new_corrfactor = (correlationCounts[i]*nfiles+corrfactor)/(nfiles+1);
-			nfiles += 1;
 			new_correlationCounts[i] = new_corrfactor;
 		}
 		return new_correlationCounts;
