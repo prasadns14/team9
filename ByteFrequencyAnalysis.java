@@ -24,21 +24,19 @@ public class ByteFrequencyAnalysis {
             File[] files = fileType.listFiles();
 
             if (!fingerprint.exists()) {
-				fingerprint.createNewFile();
-				FileWriter fw = new FileWriter(fingerprint);
+		fingerprint.createNewFile();
+		FileWriter fw = new FileWriter(fingerprint);
 
-				fw.write("0");// no of files processed = 0
-
-				for (i = 0; i < numOfHeaderTrailerBytes; i++) {
-					fw.write("\n");
-					for (int j = 0; j < maxByteValue; j++) {
-						String temp = Double.toString(0.0) + "\t";
-						fw.write(temp);
-					}
-				}
-
-				fw.close();
-			}
+		fw.write("0");// no of files processed = 0
+		for (i = 0; i < numOfHeaderTrailerBytes; i++) {
+		    fw.write("\n");
+		    for (int j = 0; j < maxByteValue; j++) {
+			String temp = Double.toString(0.0) + "\t";
+			fw.write(temp);
+		    }
+		}
+		fw.close();
+	    }
 
 
             //Reading over each file of the selected type
