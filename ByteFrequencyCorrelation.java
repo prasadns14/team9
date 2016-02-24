@@ -15,13 +15,14 @@ public class ByteFrequencyCorrelation
 		for(String type:mimetypes)
 		{
 			String curdir = new java.io.File( "." ).getCanonicalPath();
-			File fingerprint = new File(curdir+"/data/"+type+"/fingerprint.txt");
+			String filetypename = type.replace("/","-");
+			File fingerprint = new File(curdir+"/"+type+"/"+filetypename+".txt");
 			ArrayList<double[]> a = readFingerprint(fingerprint);
 			double []fingerprintCounts = a.get(0);
 	        double []correlationCounts = a.get(1);
 	        int numFiles = (int)a.get(2)[0];
 	        
-			File testFolder = new File(curdir+"/data/"+type+"/testfiles");
+			File testFolder = new File(curdir+"/"+type+"/testfiles");
 			File[] testFiles = testFolder.listFiles();
 			for(File file:testFiles)
 			{
@@ -29,7 +30,7 @@ public class ByteFrequencyCorrelation
 				correlationCounts = getCorrelationFactors(inputCounts,fingerprintCounts,correlationCounts,numFiles++);
 			}
 			getCorrelationMatrix(correlationCounts,numFiles);
-			writeFingerprint("data/"+type+"/fingerprint.txt",fingerprintCounts,correlationCounts,numFiles);
+			writeFingerprint(type+"/"+filetypename+".txt",fingerprintCounts,correlationCounts,numFiles);
 		
 		}
 	}
@@ -93,6 +94,7 @@ public class ByteFrequencyCorrelation
 		{
 			double corrfactor = getCorrelationStrength(Math.abs(inputFileCounts[i] - fingerprintCounts[i]));
 			double new_corrfactor = (correlationCounts[i]*nfiles+corrfactor)/(nfiles+1);
+			nfiles += 1;
 			new_correlationCounts[i] = new_corrfactor;
 		}
 		return new_correlationCounts;
