@@ -1,13 +1,19 @@
+/**
+ * Created by prasa on 2/23/2016.
+ */
+
 import java.io.*;
 import java.util.Scanner;
 
+import org.json.simple.JSONObject;
+
 public class ByteFrequencyAnalysis {
+    public static final String[] fileTypes = {"application\\octet-stream"};
 
     public static void main(String[] args) throws Exception{
-        
-		public static final String[] fileTypes = {"text\\plain", "text\\pdf", "text\\rdf+xml", "text\\rsf+xml", "text\\xhtml+xml", "text\\html", "image\\png", "image\\jpeg", "audio\\mpeg", "video\\mp4", "video\\quicktime", "applicaiton\\x-sh", "application\\gzip", "application\\msword", "application\\octet-stream"};
 
-    public static void main(String[] args) throws Exception{
+        double[] byteFreq = new double[256];
+        double[] byteCorrelation = new double[256];
 
         for(int i = 0; i < fileTypes.length; i++) {
 
@@ -17,16 +23,18 @@ public class ByteFrequencyAnalysis {
             File fingerprint = new File("D:\\PolarDump\\"+fileTypes[i]+"\\"+fingerprintFile+".txt");
             File[] files = fileType.listFiles();
 
+
+
             //Reading over each file of the selected type
             for(File file : files) {
                 FileInputStream fIS = new FileInputStream(file);
                 Scanner sc = new Scanner(new FileReader(fingerprint));
+
                 int numFiles = sc.nextInt();
                 System.out.println(numFiles);
                 sc.nextLine();
                 String[] terms = sc.nextLine().split("\\t");
-                double[] byteFreq = new double[256];
-                double[] byteCorrelation = new double[256];
+
                 for (int j = 0; j < 256; j++) {
                     String[] values = terms[j].split(",");
                     byteFreq[j] = Double.parseDouble(values[0]);
@@ -78,11 +86,19 @@ public class ByteFrequencyAnalysis {
                     String temp = byteFreq[j] + "," + byteCorrelation[j] + "\t";
                     fw.write(temp);
                 }
+
                 fw.write("\n");
                 fw.close();
             }
+            JSONObject json = new JSONObject();
+            for(int j = 0; j < 256; j++){
+                json.put(j, byteFreq[j]);
+            }
+            FileWriter jsonFile = new FileWriter("D:\\PolarDump\\"+fileTypes[i]+"\\"+fingerprintFile+".json");
+            jsonFile.write(json.toJSONString());
+            jsonFile.close();
+            System.out.println(json);
         }
-    }
 
     }
 }
