@@ -5,7 +5,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 public class ByteFrequencyCorrelation
 {
@@ -29,9 +34,35 @@ public class ByteFrequencyCorrelation
 				double inputCounts[] = getInputCounts(file);
 				correlationCounts = getCorrelationFactors(inputCounts,fingerprintCounts,correlationCounts,numFiles++);
 			}
-			getCorrelationMatrix(correlationCounts,numFiles);
+			double[][] correlationMatrix = getCorrelationMatrix(correlationCounts,numFiles);
 			writeFingerprint(type+"/"+filetypename+".txt",fingerprintCounts,correlationCounts,numFiles);
-		
+			JSONObject json = new JSONObject();
+            for(int j = 0; j < 256; j++){
+                json.put(j, correlationCounts[j]);
+            }
+            FileWriter jsonFile = new FileWriter(curdir+"/"+type+"/"+filetypename+"_correlation.json");
+            jsonFile.write(json.toJSONString());
+            jsonFile.close();
+            
+            JSONArray rows = new JSONArray();
+            
+            for(int i =0;i<256;++i)
+            {
+	            for(int j = 0; j < 256; j++)
+	            {
+	            	json = new JSONObject();
+	            	json.put("i", i);
+	                json.put("j", j);
+	                json.put("value", correlationMatrix[i][j]);
+	                rows.add(json);
+	            }
+            }
+            JSONObject jsonobj = new JSONObject();
+            jsonFile = new FileWriter(curdir+"/"+type+"/"+filetypename+"_correlationMatrix.json");
+            jsonobj.put("data", rows);
+            System.out.println(jsonobj);
+            jsonFile.write(jsonobj.toJSONString());
+            jsonFile.close();
 		}
 	}
 	
@@ -124,7 +155,7 @@ public class ByteFrequencyCorrelation
         fw.close();
 	}
 
-	public static void getCorrelationMatrix(double[] correlationCounts,int numFiles)
+	public static double[][] getCorrelationMatrix(double[] correlationCounts,int numFiles)
 	{
 		double [][] correlationMatrix = new double[256][256];
 		correlationMatrix[0][0] = (double)numFiles;
@@ -134,9 +165,10 @@ public class ByteFrequencyCorrelation
 			{
 				double countDiff = Math.abs(correlationCounts[i]-correlationCounts[j]);
 				correlationMatrix[i][j] = countDiff;
-				correlationMatrix[i][j] = getCorrelationStrength(countDiff);
+				correlationMatrix[j][i] = getCorrelationStrength(countDiff);
 			}
 		}
+		/**
 		for(int i=0;i<256;++i)
 		{
 			for(int j=0;j<256;++j)
@@ -145,6 +177,8 @@ public class ByteFrequencyCorrelation
 			}
 			System.out.println();
 		}
+		**/
+		return correlationMatrix;
 	}
 	
 }
