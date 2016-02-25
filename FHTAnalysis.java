@@ -64,10 +64,12 @@ public class FHTAnalysis {
 			String trailerFingerPrintFile = "Trailer_" + fileTypes[i].replace("\\", "-");
 			File headerFingerPrint = new File("C:\\DataDump\\" + fileTypes[i] + "\\" + headerFingerPrintFile + ".txt");
 			System.out.println("C:\\DataDump\\" + fileTypes[i] + "\\" + headerFingerPrintFile + ".txt");
+
 			File trailerFingerPrint = new File(
 					"C:\\DataDump\\" + fileTypes[i] + "\\" + trailerFingerPrintFile + ".txt");
 
 			int num = 0;
+			
 			if (!trailerFingerPrint.exists()) {
 				trailerFingerPrint.createNewFile();
 
@@ -75,7 +77,7 @@ public class FHTAnalysis {
 
 				fw.write("0");
 
-				for (i = 0; i < numOfHeaderTrailerBytes; i++) {
+				for (int k = 0; k < numOfHeaderTrailerBytes; k++) {
 					fw.write("\n");
 					for (int j = 0; j < maxByteValue; j++) {
 						String temp = Double.toString(0.0) + "\t";
@@ -92,7 +94,7 @@ public class FHTAnalysis {
 
 				fw.write("0");// no of files processed = 0
 
-				for (i = 0; i < numOfHeaderTrailerBytes; i++) {
+				for (int k = 0; k < numOfHeaderTrailerBytes; k++) {
 					fw.write("\n");
 					for (int j = 0; j < maxByteValue; j++) {
 						String temp = Double.toString(0.0) + "\t";
@@ -123,7 +125,7 @@ public class FHTAnalysis {
 
 				scHFP.nextLine();
 				// load the header figerprint
-				for (i = 0; i < numOfHeaderTrailerBytes; i++) {
+				for (int k = 0; k < numOfHeaderTrailerBytes; k++) {
 					String[] terms = scHFP.nextLine().split("\\t");
 					for (int j = 0; j < maxByteValue; j++) {
 						headerByteFrequency[i][j] = Double.parseDouble(terms[j]);
@@ -137,7 +139,7 @@ public class FHTAnalysis {
 
 				scTFP.nextLine();
 
-				for (i = 0; i < numOfHeaderTrailerBytes; i++) {
+				for (int k = 0; k < numOfHeaderTrailerBytes; k++) {
 					String[] terms = scTFP.nextLine().split("\\t");
 					for (int j = 0; j < maxByteValue; j++) {
 						trailerByteFrequency[i][j] = Double.parseDouble(terms[j]);
@@ -167,27 +169,28 @@ public class FHTAnalysis {
 				} else {
 
 					System.out.println(byteFile.length);
-					int j = 0;
-					
+
+					int byteIndexJ = 0;
+					int byteIndexI = 0;
 					//headerFingerPrint
-					for (j = 0; j < byteFile.length; j++) {
-						headerByteCount[j][0xFF & byteFile[j]]++;
+					for (byteIndexJ = 0; byteIndexJ < byteFile.length; byteIndexJ++) {
+						headerByteCount[byteIndexJ][0xFF & byteFile[byteIndexJ]]++;
 					}
-					for (i = j; i < numOfHeaderTrailerBytes; i++) {
-						for (int k = 0; k < maxByteValue; k++) {
-							headerByteCount[i][k]--;
+					for (byteIndexI = byteIndexJ; byteIndexI < numOfHeaderTrailerBytes; byteIndexI++) {
+						for (int byteIndexK = 0; byteIndexK < maxByteValue; byteIndexK++) {
+							headerByteCount[byteIndexI][byteIndexK]--;
 						}
 					}
 
 					//trailerFingerPrint 
-					for (j = 0, i = byteFile.length; i > 0; i--, j++) {
+					for (byteIndexJ = 0, byteIndexI = byteFile.length; byteIndexI > 0; byteIndexI--, byteIndexJ++) {
 						// headerByteCount[i][0xFF & byteFile[i]]++;
-						trailerByteCount[j][0xFF & byteFile[byteFile.length - i]]++;
+						trailerByteCount[byteIndexJ][0xFF & byteFile[byteFile.length - byteIndexI]]++;
 					}
 
-					for (i = j; i < numOfHeaderTrailerBytes; i++) {
-						for (j = 0; j < maxByteValue; j++) {
-							trailerByteCount[i][j]--;
+					for (byteIndexI = byteIndexJ; byteIndexI < numOfHeaderTrailerBytes; byteIndexI++) {
+						for (byteIndexJ = 0; byteIndexJ < maxByteValue; byteIndexJ++) {
+							trailerByteCount[byteIndexI][byteIndexJ]--;
 						}
 					}
 				}
