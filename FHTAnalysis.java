@@ -97,7 +97,7 @@ public JSONArray getJsonObject(int numOfHeaderTrailerBytes,double[][] byteFreque
 			String trailerFingerPrintFile = "Trailer_" + fileTypes[fileTypesIndex].replace("\\", "-");
 	        
 			//create header finger print file 
-			File headerFingerPrint = new File("C:\\PolarDump\\" + fileTypes[fileTypesIndex] + "\\" + Integer.toString(numOfHeaderTrailerBytes) + ".txt");
+			File headerFingerPrint = new File("C:\\PolarDump\\" + fileTypes[fileTypesIndex] + "\\" + headerFingerPrintFile +Integer.toString(numOfHeaderTrailerBytes) + ".txt");
 
 			System.out.println("C:\\PolarDump\\" + fileTypes[fileTypesIndex] + "\\" + headerFingerPrintFile + Integer.toString(numOfHeaderTrailerBytes) + ".txt");
 			
@@ -271,11 +271,10 @@ public JSONArray getJsonObject(int numOfHeaderTrailerBytes,double[][] byteFreque
 			
 			
 			
-			//get json object for header and trailer fingerprint 
+			
 			JSONArray headerJson = fht.getJsonObject(numOfHeaderTrailerBytes,headerByteFrequency);
 			JSONArray trailerJson = fht.getJsonObject(numOfHeaderTrailerBytes,trailerByteFrequency);		
 			
-            //write the json object  to  a json file. 
 			fht.writeJsonFile(fileTypes[fileTypesIndex], headerFingerPrintFile, headerJson);
 			fht.writeJsonFile(fileTypes[fileTypesIndex], trailerFingerPrintFile, trailerJson);
             
