@@ -5,8 +5,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
 import org.json.simple.JSONArray;
@@ -14,7 +12,7 @@ import org.json.simple.JSONObject;
 
 public class ByteFrequencyCorrelation
 {
-	public static String mimetypes[] = {"application/pdf"};//,"application/octet-stream","image/jpeg","image/png"};
+	public static String mimetypes[] = {"text/html"};//,"application/octet-stream","image/jpeg","image/png"};
 	public static void main(String args[]) throws IOException
 	{
 		for(String type:mimetypes)
@@ -34,7 +32,7 @@ public class ByteFrequencyCorrelation
 				double inputCounts[] = getInputCounts(file);
 				correlationCounts = getCorrelationFactors(inputCounts,fingerprintCounts,correlationCounts,numFiles++);
 			}
-			double[][] correlationMatrix = getCorrelationMatrix(correlationCounts,numFiles);
+			double[][] correlationMatrix = getCorrelationMatrix(fingerprintCounts, correlationCounts,numFiles);
 			writeFingerprint(type+"/"+filetypename+".txt",fingerprintCounts,correlationCounts,numFiles);
 			JSONObject json = new JSONObject();
             for(int j = 0; j < 256; j++){
@@ -60,10 +58,11 @@ public class ByteFrequencyCorrelation
             JSONObject jsonobj = new JSONObject();
             jsonFile = new FileWriter(curdir+"/"+type+"/"+filetypename+"_correlationMatrix.json");
             jsonobj.put("data", rows);
-            System.out.println(jsonobj);
+            //System.out.println(jsonobj);
             jsonFile.write(jsonobj.toJSONString());
             jsonFile.close();
 		}
+		System.out.println("Done :)");
 	}
 	
 	public static ArrayList<double[]> readFingerprint(File fingerprint) throws FileNotFoundException
@@ -102,14 +101,21 @@ public class ByteFrequencyCorrelation
         for(int i = 0; i < byteFile.length; i++){
             byteCount[0xFF & byteFile[i]]++;
         }
-        int max = 0;
+        int max = 0, count=0;
         for(int i = 0; i < byteCount.length; i++){
             if(byteCount[i] > max){
                 max = byteCount[i];
             }
+            count += byteCount[i];
         }
         for(int i = 0; i < byteCount.length; i++){
             normalizedCount[i] = (byteCount[i]/(double)max);
+        }
+        
+        if (max > (0.7 * count)) {
+            for (int i = 0; i < 256; ++i) {
+               normalizedCount[i] = Math.pow(normalizedCount[i], 0.5);
+            }
         }
         return normalizedCount;
 	}
@@ -125,7 +131,6 @@ public class ByteFrequencyCorrelation
 		{
 			double corrfactor = getCorrelationStrength(Math.abs(inputFileCounts[i] - fingerprintCounts[i]));
 			double new_corrfactor = (correlationCounts[i]*nfiles+corrfactor)/(nfiles+1);
-			nfiles += 1;
 			new_correlationCounts[i] = new_corrfactor;
 		}
 		return new_correlationCounts;
@@ -155,16 +160,16 @@ public class ByteFrequencyCorrelation
         fw.close();
 	}
 
-	public static double[][] getCorrelationMatrix(double[] correlationCounts,int numFiles)
+	public static double[][] getCorrelationMatrix(double[] fingerprintCounts, double[] correlationCounts,int numFiles)
 	{
 		double [][] correlationMatrix = new double[256][256];
 		correlationMatrix[0][0] = (double)numFiles;
 		for(int i=0;i<256;++i)
 		{
-			for(int j=i+1;j<256;++j)
+			for(int j=0;j<256;++j)
 			{
+				correlationMatrix[i][j] = Math.abs(fingerprintCounts[i] - fingerprintCounts[j]);
 				double countDiff = Math.abs(correlationCounts[i]-correlationCounts[j]);
-				correlationMatrix[i][j] = countDiff;
 				correlationMatrix[j][i] = getCorrelationStrength(countDiff);
 			}
 		}
