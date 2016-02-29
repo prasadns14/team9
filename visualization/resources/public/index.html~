@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Aggregate Mime Types</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/sb-admin.css" rel="stylesheet">
+	<!-- Custom CSS -->
+    
+    <!-- Morris Charts CSS -->
+    <link href="css/plugins/morris.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+	<!-- Social Buttons CSS -->
+    <link href="css/plugins/social-buttons.css" type="text/css" rel="stylesheet">
+
+    <style>
+	.arc text {
+	  font: 10px sans-serif;
+	  text-anchor: middle;
+	}
+
+	.arc path {
+	  stroke: #fff;
+	}
+    </style>
+    <script src = "js/d3.v3.min.js"></script>
+	
+	<script>
+function load(){
+var width = 960,
+    height = 500,
+    radius = Math.min(width, height) / 2;
+
+var color = d3.scale.category20b();
+//d3.scale.ordinal()
+//    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+
+var arc = d3.svg.arc()
+    .outerRadius(radius - 10)
+    .innerRadius(0);
+
+var labelArc = d3.svg.arc()
+    .outerRadius(radius - 40)
+    .innerRadius(radius - 40);
+
+var pie = d3.layout.pie()
+    .sort(null)
+    .value(function(d) { alert(d.count); return parseInt(d.count); });
+
+var svg = d3.select("#chart_panel").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+  .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+d3.json("json/total.json", function(error, data) {
+  if (error) throw error;
+  var g = svg.selectAll(".arc")
+      .data(pie(data))
+    .enter().append("g")
+      .attr("class", "arc");
+
+  g.append("path")
+      .attr("d", arc)
+      .style("fill", function(d) { return color(d.data.mime_type); });
+
+  g.append("text")
+      .attr("transform", function(d) { return "translate(" + labelArc.centroid(d) + ")"; })
+      .attr("dy", ".35em")
+      .text(function(d) { alert(d.data.mime_type); return d.data.mime_type; });
+});
+function type(d) {
+  d.count = +d.count;
+  return d;
+}
+}
+</script>
+</head>
+
+<body onload="load();">
+
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">PROTEIN ANALYSIS</a>
+            </div>
+            <!-- Top Menu Items -->
+	    <!--
+            <ul class="nav navbar-right top-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="fullname" ></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="profile.html"><i class="fa fa-fw fa-user"></i> Profile</a>
+                        </li>
+                       
+                        <li class="divider"></li>
+                        <li>
+                            <a href="http://localhost:8080/login.html"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+	   -->
+            <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav side-nav">
+                   <li>
+			<a href="http://localhost:8080/fileupload.html"><i class="fa fa-fw fa-arrows-v"></i> Upload Data</a>
+		    </li>
+		    <li>
+			<a href="http://localhost:8080/delete.html"><i class="fa fa-fw fa-arrows-v"></i> Delete Data</a>
+		    </li>
+		    <li>
+			<a href="http://localhost:8080/heatmap.html"><i class="fa fa-fw fa-arrows-v"></i> Heatmap view</a>
+		    </li>
+		    <li class="active">
+			<a href="http://localhost:8080/species.html"><i class="fa fa-fw fa-arrows-v"></i> Specieswise filter</a>
+		    </li>
+		    <li>
+			<a href="http://localhost:8080/protein.html"><i class="fa fa-fw fa-arrows-v"></i> Proteinwise filter</a>
+		    </li>
+		    <li>
+			<a href="http://localhost:8080/bdf.html"><i class="fa fa-fw fa-arrows-v"></i> Protein value filter</a>
+		    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </nav>
+
+        <div id="page-wrapper">
+
+            <div class="container-fluid" >
+
+                <!-- Page Heading -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">
+                            Aggregate Mime Types | <small id="name"> </small>
+                        </h1>
+                        
+                    </div>
+                </div>
+                <!-- /.row-->
+		<!--<div class="col-lg-8">-->
+		
+                      
+                    </div>
+		<!--</div>-->
+            <!-- /.container-fluid -->
+        </div></br>
+	<div  id="chart_panel">
+                            
+                            
+        </div> 
+        <!-- /#page-wrapper -->
+		<div style="margin-left:75%">
+		<a href="http://localhost:8080/about.html">About</a> &nbsp &nbsp
+		<a href="http://localhost:8080/help.html">Help</a> &nbsp &nbsp
+		<a href="http://localhost:8080/contact.html">Contact Us</a> &nbsp &nbsp
+		<a class="btn btn-social-icon btn-facebook"><i class="fa fa-facebook"></i></a> &nbsp &nbsp
+		<a class="btn btn-social-icon btn-twitter"><i class="fa fa-twitter"></i></a> &nbsp &nbsp
+		</div>	
+
+    </div>
+    <!-- /#wrapper -->
+
+</body>
+
+</html>
