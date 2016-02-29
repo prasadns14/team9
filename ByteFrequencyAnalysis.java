@@ -28,12 +28,10 @@ public class ByteFrequencyAnalysis {
 		FileWriter fw = new FileWriter(fingerprint);
 
 		fw.write("0");// no of files processed = 0
-		for (i = 0; i < numOfHeaderTrailerBytes; i++) {
+		for (int i = 0; i < 256; i++) {
 		    fw.write("\n");
-		    for (int j = 0; j < maxByteValue; j++) {
-			String temp = Double.toString(0.0) + "\t";
-			fw.write(temp);
-		    }
+		    String temp = Double.toString(0.0) + "\t";
+		    fw.write(temp);
 		}
 		fw.close();
 	    }
