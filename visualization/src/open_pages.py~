@@ -1,0 +1,4 @@
+import webbrowser
+
+webbrowser.open("http://localhost:8080/bfa.html", new=0, autoraise=True)
+	webbrowser.open("http://localhost:8080/bfc.html", new=0, autoraise=True)
